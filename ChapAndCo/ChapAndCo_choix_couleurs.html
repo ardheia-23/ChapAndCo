@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sélection des couleurs</title>
+  <meta charset="utf8">
+  <style>
+      .disabled {
+          opacity: 0.5; /* Règle le niveau d'opacité pour l'effet grisé */
+          pointer-events: none; /* Empêche les clics sur les éléments grisés */
+          color: gray;
+      }
+  </style>
+  <script type="text/javascript">
+    function envoyerCouleurs() {
+        let couleur1 = document.getElementById('couleur1').value;
+        let couleur2 = document.getElementById('couleur2').value;
+        let couleur3 = document.getElementById('couleur3').value;
+        let nb = document.querySelector('input[name="radio_bout"]:checked').value;
+        let deca = document.getElementById("decala").value;
+        let laize = document.getElementById("largeur_laize").value;
+        var arg = nb + ',' + laize + ',' + deca + ',' + couleur1 + ',' + couleur2 + ',' + couleur3
+        //console.log(arg);
+        window.location = 'skp:appliquer_couleurs@' + arg;
+    }
+  </script>
+</head>
+<body>
+  Nombre de couleurs : 1 <input type="radio" id="choix_base" name="radio_bout" value = "1" onchange="griser_couleurs()"/>, 2 <input type="radio" id="choix_base" name="radio_bout"  value = "2" checked="true"  onchange="griser_couleurs()"/>, ou 3 <input type="radio" id="choix_base" name="radio_bout"  value = "3"  onchange="griser_couleurs()"/> ?<br /> <br>
+  Largeur de laize <input type="text" id="largeur_laize" value="1" size="4" maxlength="2"/><br /><br>
+  <div id="dec">Decalage <input type="text" id="decala" value="1" size="4" maxlength="2"/><br /><br></div>
+  Premiere couleur :<input type="color" id="couleur1" name="couleur1" value="#b91ab1"><br /><br>
+    <div id="coul2">
+        Deuxieme couleur : <input type="color" id="couleur2" name="couleur2" value="#d4c33a"><br /><br>
+    </div>
+    <div id="coul3">
+      Troisieme couleur : <input type="color" id="couleur3" name="couleur3" value="#3594a6"><br /><br>
+    </div>
+
+  <div style="text-align: center;" ><input type="submit" onclick="envoyerCouleurs();" value="Appliquer"/></div>
+  
+  <script type="text/javascript">
+    function griser_couleurs() {
+        let valeur = document.querySelector('input[name="radio_bout"]:checked').value;
+        //console.log(valeur);
+        let ligne = document.getElementById("coul2");
+        let ligne2 = document.getElementById("coul3");
+        if (isNaN(valeur)) { // Gérer le cas où l'entrée n'est pas un nombre
+            valeur = 1; // ou une autre valeur par défaut
+        }
+        if (valeur == 1) {
+            ligne.classList.add("disabled");
+            ligne2.classList.add("disabled");
+        } else if (valeur == 2) {
+            ligne.classList.remove("disabled");
+            ligne2.classList.add("disabled");
+        } else {
+            ligne.classList.remove("disabled");
+            ligne2.classList.remove("disabled");
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+                griser_couleurs();
+                //console.log(window.sketchup_initial_value);
+                //if (window.sketchup_initial_value !== undefined){
+                //  document.getElementById('dec').classList.add('disabled');
+                //}
+            });
+    </script>
+
+</body>
+</html>

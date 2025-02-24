@@ -1,0 +1,135 @@
+<html>
+    <head>
+        <meta charset="utf8">
+        <style>
+            .disabled {
+                opacity: 0.5; /* Règle le niveau d'opacité pour l'effet grisé */
+                pointer-events: none; /* Empêche les clics sur les éléments grisés */
+                color: gray;
+            }
+        </style>
+        <script type="text/javascript">
+            function sendPoints()
+            {
+                var ids = new Array ("nb_sommets", "nb_poteaux", "ht_chap", //"toil_tour", "ht_pot_tour", "abside", "dec_abside",
+                 "ray_sommet", "oblongue", "coup_ob_m", "rayon_cercle_sommets", "decal","choix_base","gd_rayon",
+                 "pt_rayon","nb_div_noue","nb_div_sab");
+                //console.log(ids);
+                var arg = ""; var entry = ""; var valid = true;
+                // Iterate through the text boxes to form output argument
+                for (i in ids)
+                {
+                    //console.log(i);
+                    const element = document.getElementById(ids[i])
+                    if (element && element.type === 'checkbox') {
+                        entry = document.getElementById(ids[i]).checked
+                    } else if(element && element.type === 'radio') {
+                        entry = document.querySelector('input[name="radio_bout"]:checked').value
+                    } else {
+                        entry = document.getElementById(ids[i]).value
+                    }
+                    //console.log(entry);
+                    arg = arg + entry + ",";
+                }
+                //console.log(arg);
+                // Send argument to SketchUp script for processing
+                if (!valid)
+                {
+                    arg = "";
+                }
+                //console.log(arg);
+                window.location = 'skp:recup_vals@' + arg;
+            }
+
+            
+        </script>
+    </head>
+    <body>
+        Nombre de sommets <input type="text" title="essai" id="nb_sommets" value="1" size="4" maxlength="2" oninput="griser_sommets()"/><br />
+        Nombre de poteaux de tour <input type="text" id="nb_poteaux" value="5" size="4" maxlength="2"/><br />
+        Hauteur du chapiteau <input type="text" id="ht_chap" value="7.0" size="4" maxlength="4"/> m<br />
+        <!-- Toile de tour <input type="checkbox" id="toil_tour" checked="true" onchange="griser_hauteur()"/>  ?<br />
+        <div id="haut_pot">
+            Hauteur des poteaux de tour <input type="text" id="ht_pot_tour" value="2.0" size="4" maxlength="4"/> m<br />
+            Mur en abside <input type="checkbox" id="abside" onchange="griser_abs()"/>  ?<br />
+            <div id="abs_m">Décalage abside <input type="text" id="dec_abside" value="1" size="4" maxlength="4"/> m<br /></div>
+        </div> -->
+        Rayon du (ou des) sommets <input type="text" id="ray_sommet" value="0.5" size="4" maxlength="4"/> m<br />
+        <div id="coup_oblongue">
+            Coupole oblongue <input type="checkbox" id="oblongue" onchange="griser_coup()"/>  ?<br />
+            <div id="obl_m">longueur droite de la coupole <input type="text" id="coup_ob_m" value="2" size="4" maxlength="4"/> m<br /></div>
+        </div>
+        <div id="rayo">Rayon du cercle des sommets <input type="text" id="rayon_cercle_sommets" value="5" size="4" maxlength="2"/> m<br />
+        Décalé <input type="checkbox" id="decal"/>  ?<br /></div>
+        Base : cercle <input type="radio" id="choix_base" name="radio_bout" value = "cercle" checked="true" onchange="griser_ellipse()"/> ou ellipse <input type="radio" id="choix_base" name="radio_bout"  value = "ellipse"  onchange="griser_ellipse()"/> ?<br /> 
+        Rayon de la base <input type="text" id="gd_rayon" value="10.0" size="4" maxlength="4"/> m<br />
+        <div id="pt_rayo">Petit rayon de la base elliptique <input type="text" id="pt_rayon" value="6.0" size="4" maxlength="4"/> m<br /></div>
+        Nombre de division verticales <input type="text" id="nb_div_noue" value="5" size="4" maxlength="2"/><br />
+        Nombre de division horizontales entre poteaux <input type="text" id="nb_div_sab" value="2" size="4" maxlength="2"/><br /><br />
+
+        <div style="text-align: center;" ><input type="submit" onclick="sendPoints();" value="Lancer le maillage"/></div>
+
+        <script type="text/javascript">
+            function griser_sommets() {
+                let valeur = parseInt(document.getElementById("nb_sommets").value);
+                //console.log(valeur);
+                let ligne = document.getElementById("rayo");
+                let ligne2 = document.getElementById("coup_oblongue");
+                if (isNaN(valeur)) { // Gérer le cas où l'entrée n'est pas un nombre
+                    valeur = 1; // ou une autre valeur par défaut
+                }
+                if (valeur == 1) {
+                    ligne.classList.add("disabled");
+                    ligne2.classList.remove("disabled");
+                } else {
+                    ligne.classList.remove("disabled");
+                    ligne2.classList.add("disabled");
+                }
+            }
+            function griser_ellipse() {
+                let valeur = document.querySelector('input[name="radio_bout"]:checked').value;
+                //console.log(valeur);
+                let ligne = document.getElementById("pt_rayo");
+                if (valeur === "cercle") {
+                    ligne.classList.add("disabled");
+                } else {
+                    ligne.classList.remove("disabled");
+                }
+            }
+            function griser_hauteur() {
+                let valeur = document.getElementById("toil_tour").checked;
+                let ligne = document.getElementById("haut_pot");
+                if (!valeur) {
+                    ligne.classList.add("disabled");
+                } else {
+                    ligne.classList.remove("disabled");
+                }
+            }
+            function griser_abs() {
+                let valeur = document.getElementById("abside").checked;
+                let ligne = document.getElementById("abs_m");
+                if (!valeur) {
+                    ligne.classList.add("disabled");
+                } else {
+                    ligne.classList.remove("disabled");
+                }
+            }
+            function griser_coup() {
+                let valeur = document.getElementById("oblongue").checked;
+                let ligne = document.getElementById("obl_m");
+                if (!valeur) {
+                    ligne.classList.add("disabled");
+                } else {
+                    ligne.classList.remove("disabled");
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                griser_sommets();
+                griser_ellipse();
+                griser_abs();
+                griser_coup();
+            });
+        </script>
+    </body>
+</html>
